@@ -1,4 +1,4 @@
-package dev.game.socket;
+package dev.game.socket.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;

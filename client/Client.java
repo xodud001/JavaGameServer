@@ -1,4 +1,4 @@
-package dev.game.socket;
+package dev.game.socket.client;
 
 import java.io.*;
 import java.net.Socket;
@@ -9,6 +9,13 @@ public class Client {
     BufferedReader in;
     PrintWriter out;
 
+    String serverIPv4 = "127.0.0.1";
+    int serverPort = 10002;
+
+    String header = "\"login\"";
+    String id = "\"xodud\"";
+    String pw = "\"xodud\"";
+
     public static void main(String[] args) {
         new Client();
     }
@@ -18,17 +25,28 @@ public class Client {
         streamSetting();
         dataSend();
         dataRecv();
-    }
+    }    
 
     public void connect() {
         try{
-            clientSocket=new Socket("127.0.0.1",10002);
+            clientSocket=new Socket(serverIPv4, serverPort);
             System.out.println("[Client] Connected to server");
         }
         catch(Exception e) {
             System.out.println(e.toString());
         }
     }
+
+    public void streamSetting() {
+        try{
+            out = new PrintWriter(clientSocket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        }
+        catch(Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+
 
     public void dataRecv() {
         new Thread(new Runnable() {
@@ -68,8 +86,11 @@ public class Client {
                         String sendData=input.nextLine();
                         if(sendData.equals("/quit"))
                             isThread=false;
-                        else
-                            out.println(sendData);
+                        else {
+                            String login = String.format("{\"Header\":%s,\"id\":%s,\"pw\":%s}", header, id, pw);
+                            System.out.println(login);
+                            out.println(login);
+                        }
                     }
                     catch (Exception e) {
                         System.out.println(e.toString());
@@ -84,16 +105,6 @@ public class Client {
                     }
             }
         }).start();
-    }
-    public void streamSetting() {
-        try{
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-        }
-        catch(Exception e) {
-            System.out.println(e.toString());
-        }
     }
 }
 

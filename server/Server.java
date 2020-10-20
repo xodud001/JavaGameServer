@@ -1,4 +1,4 @@
-package dev.game.socket;
+package dev.game.socket.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -27,7 +27,7 @@ public class Server {
     }
 
     public static void main(String[] args) {
-        Socket clientSocket;
+        Socket clientSocket = null;
         Server s = new Server();
         while(true) {
             try {

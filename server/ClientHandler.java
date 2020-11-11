@@ -5,16 +5,14 @@ import java.net.Socket;
 public class ClientHandler {
     Socket clientSocket;
 
-    ServerRecv serverRecv;
+    LoginThread loginThread;
     ServerSend serverSend;
 
     public void streamSetting() {
         try{
             clientSocket.getInetAddress();
-            serverRecv = new ServerRecv(clientSocket);
-            serverSend = new ServerSend(clientSocket);
-            new Thread(serverRecv).start();
-            new Thread(serverSend).start();
+            loginThread = new LoginThread(clientSocket);
+            new Thread(loginThread).start();
         }
         catch(Exception e) {
             System.out.println(e.toString());

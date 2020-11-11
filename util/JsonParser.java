@@ -9,9 +9,6 @@ import java.sql.Connection;
 
 public class JsonParser {
     private static JSONParser jParser = new JSONParser();
-    private static JSONObject jObject;
-
-    Connection conn;
 
     public static JSONObject createJson(String data) throws ParseException {
         return (JSONObject)jParser.parse(data);

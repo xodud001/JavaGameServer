@@ -27,55 +27,19 @@ public class DatabaseConnection {
         return connector;
     }
 
-    public boolean createUser(User user) {
-        String sql = "insert into user values(?, ?, ?, ?, ?);";
+    // ID 중복 체크
+    public boolean idCheck(User user) {
+        String sql = "SELECT id FROM user WHERE id=?;";
         PreparedStatement pstate = null;
         boolean result = false;
-        try {
-            pstate = conn.prepareStatement(sql);
-            pstate.setString(1, user.getId());
-            pstate.setString(2, user.getPw());
-            pstate.setString(3, user.getName());
-            pstate.setString(4, user.getBirth().toString());
-            pstate.setString(5, user.getPhone());
-
-            if(pstate.executeUpdate() == 1) {
-                System.out.println("[회원가입 성공]");
-                result = true;
-            } else {
-                System.out.println("[회원가입 실패]");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (pstate != null && !pstate.isClosed())
-                    pstate.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
-
-    public boolean userLogin(User user) {
-        String sql = "SELECT pw FROM user WHERE id = ?;";
-        PreparedStatement pstate = null;
-        boolean result = false;
-
         try {
             pstate = conn.prepareStatement(sql);
             pstate.setString(1, user.getId());
             ResultSet rs = pstate.executeQuery();
-            if(rs.next()) {
-                if(rs.getString(1).equals(user.getPw())) {
-                    System.out.println("[로그인 성공]");
-                    result = true;
-                }else
 
-                    System.out.println("[로그인 실패] ");
-            }
+            rs.next();
+            result = rs.getString(1).equals(user.getId());
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -89,4 +53,116 @@ public class DatabaseConnection {
         return result;
     }
 
+    // 회원가입
+    public boolean createUser(User user) {
+        String sql = "insert into user values(?, ?, ?, ?, ?);";
+        PreparedStatement pstate = null;
+        boolean result = false;
+        try {
+            if(!idCheck(user)) { // id 중복 체크
+                pstate = conn.prepareStatement(sql);
+                pstate.setString(1, user.getId());
+                pstate.setString(2, user.getPw());
+                pstate.setString(3, user.getName());
+                pstate.setString(4, user.getBirth());
+                pstate.setString(5, user.getPhone());
+                int rs = pstate.executeUpdate();
+
+                result = rs == 1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstate != null && !pstate.isClosed())
+                    pstate.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    // id 찾기
+    public String findID(User user) {
+        String sql = "SELECT id FROM user WHERE name=? AND birth=?;";
+        PreparedStatement pstate = null;
+
+        try {
+            pstate = conn.prepareStatement(sql);
+            pstate.setString(1, user.getName());
+            pstate.setString(2, user.getBirth());
+            ResultSet rs = pstate.executeQuery();
+
+            if(rs.next())
+                return rs.getString("id");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstate != null && !pstate.isClosed())
+                    pstate.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    // pw 찾기
+    public String findPW(User user) {
+        String sql = "SELECT pw FROM user WHERE id=? AND name=?;";
+        PreparedStatement pstate = null;
+
+        try {
+            pstate = conn.prepareStatement(sql);
+            pstate.setString(1, user.getId());
+            pstate.setString(2, user.getName());
+            ResultSet rs = pstate.executeQuery();
+
+            if(rs.next())
+                return rs.getString("pw");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstate != null && !pstate.isClosed())
+                    pstate.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+
+    //로그인
+    public boolean userLogin(User user) {
+        String sql = "SELECT pw FROM user WHERE id = ?;";
+        PreparedStatement pstate = null;
+        boolean result = false;
+
+        try {
+            pstate = conn.prepareStatement(sql);
+            pstate.setString(1, user.getId());
+            ResultSet rs = pstate.executeQuery();
+            if(rs.next()) {
+                if(rs.getString(1).equals(user.getPw()))
+                    result = true;
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstate != null && !pstate.isClosed())
+                    pstate.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
 }

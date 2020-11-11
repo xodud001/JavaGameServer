@@ -1,8 +1,11 @@
 package dev.game.socket.game_data;
 
+import org.json.simple.JSONObject;
+
 import java.util.ArrayList;
 
 public class Room { //게임 방
+
     private static ArrayList<Room> rooms = new ArrayList<>();
 
     int roomCode; //
@@ -35,5 +38,13 @@ public class Room { //게임 방
         }
 
         return rooms.get(rooms.size()-1); // 끝방 리턴
+    }
+
+    public void update(JSONObject requestJson) {
+        for(Crewmate crewmate : crewmates){
+            if( crewmate.owner.equals(requestJson.get("owner")) ){
+                crewmate.update(requestJson);
+            }
+        }
     }
 }

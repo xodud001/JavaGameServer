@@ -17,8 +17,9 @@ public class Crewmate {
 
     boolean isStop; // 상태 정보
     float stateTimer; // 상태 시간
-    public Crewmate(){
-        this.owner = "xodud1";
+
+    public Crewmate(String owner){
+        this.owner = owner;
         this.x = 150;
         this.y = 150;
         this.name = "성경이";
@@ -58,4 +59,22 @@ public class Crewmate {
         return result;
     }
 
+    public void update(JSONObject requestJson) {
+        double temp = Double.parseDouble(requestJson.get("x").toString());
+        this.x = (int)temp;
+        temp = Double.parseDouble(requestJson.get("y").toString());
+        this.y = (int)temp;
+        temp = Double.parseDouble(requestJson.get("maxHP").toString());
+        this.maxHP = (int)temp;
+        temp = Double.parseDouble(requestJson.get("HP").toString());
+        this.HP = (int)temp;
+
+        this.isStop = requestJson.get("isStop").toString().equals("true");
+        temp = Double.parseDouble(requestJson.get("stateTimer").toString());
+        this.stateTimer = (float)temp;
+
+        this.name = requestJson.get("name").toString();
+        this.color = requestJson.get("color").toString();
+        this.state = requestJson.get("state").toString();
+    }
 }

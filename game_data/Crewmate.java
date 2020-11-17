@@ -13,10 +13,10 @@ public class Crewmate {
     int x; // 캐릭터 x 좌표 Update
     int y; // 캐릭터 y 좌표 Update
 
-    int drmX;
-    int drmY;
+    float drmX;
+    float drmY;
 
-    int frame;
+    int frameNum;
 
     // 이벤트
     int HP; // 현재 체력
@@ -43,6 +43,9 @@ public class Crewmate {
         result.put("color", color); //
         result.put("maxHP", maxHP);
         result.put("HP", HP);
+        result.put("frameNum", frameNum);
+        result.put("drmX", drmX);
+        result.put("drmY", drmY);
         return result;
     }
     @SuppressWarnings("unchecked")
@@ -65,6 +68,10 @@ public class Crewmate {
         temp = Double.parseDouble(requestJson.get("HP").toString());
         this.HP = (int)temp;
 
+        this.frameNum = Integer.parseInt(requestJson.get("frameNum").toString());
+
+        this.drmX = Float.parseFloat(requestJson.get("drmX").toString());
+        this.drmY = Float.parseFloat(requestJson.get("drmY").toString());
 
         this.name = requestJson.get("name").toString();
         this.color = requestJson.get("color").toString();

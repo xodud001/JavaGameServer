@@ -40,7 +40,7 @@ public class Room { //게임 방
         return rooms.get(rooms.size()-1); // 끝방 리턴
     }
 
-    public void update(JSONObject requestJson) {
+    public void update(JSONObject requestJson) { // 방 정보 업데이트
         for(Crewmate crewmate : crewmates){
             if( crewmate.owner.equals(requestJson.get("owner")) ){
                 crewmate.update(requestJson);

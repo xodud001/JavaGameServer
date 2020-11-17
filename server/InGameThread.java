@@ -45,33 +45,36 @@ public class InGameThread implements Runnable{
                         System.out.println("[LOGOUT]");
                         isThread=false;
                     }
-                    else if(requestJson.get("Header").equals("ENTER")){
-                        room = Room.getRoom();
-                        roomInfoJson.put("code", room.getRoomCode());
-                        JSONObject crewmatesJson = new JSONObject();
+                    else if(requestJson.get("Header").equals("ENTER")){ // 처음 입장
+                        room = Room.getRoom(); // 방을 받아옴
+                        roomInfoJson.put("code", room.getRoomCode()); // 방 코드 입력
+                        JSONObject crewmatesJson = new JSONObject(); // 방에 있는 유저들 정보 담을 Json
 
-                        room.getCrewmates().add(new Crewmate(requestJson.get("owner").toString()));
+
                         for (Crewmate crewmate : room.getCrewmates()){ // 기존 방에 있던 크루원들 초기 정보
-                            crewmatesJson.put(room.getCrewmates().indexOf(crewmate), crewmate.getInitCrewmateJson());
+                            crewmatesJson.put(room.getCrewmates().indexOf(crewmate), crewmate.getInitCrewmateJson()); // 제이슨으로 받아서 0, 1, 2, 3, 4로 번호 매겨서 제이슨 생성
                         }
-                        roomInfoJson.put("crewmates", crewmatesJson);
+                        roomInfoJson.put("crewmates", crewmatesJson); // 기존 크루원들 정보 받아서 업데이트
 
-                        System.out.println(roomInfoJson.toJSONString());
+                        room.getCrewmates().add(new Crewmate(requestJson.get("owner").toString())); // 처음 입장한 유저가 업데이트할 crewmate 생성
 
-                        out.println(roomInfoJson.toJSONString());
+                        //System.out.println(roomInfoJson.toJSONString());
+
+                        out.println(roomInfoJson.toJSONString()); // 방 초기 정보 전송
                     }
                     else if(requestJson.get("Header").equals("UPDATE") && room.getRoomCode() != -1){
-                        room.update(requestJson);
+                        room.update(requestJson); // 방에 크루메이트 정보 업데이트
 
-                        roomInfoJson.put("code", room.getRoomCode());
-                        JSONObject crewmatesJson = new JSONObject();
+                        roomInfoJson.put("code", room.getRoomCode()); // 방번호 입력
+                        JSONObject crewmatesJson = new JSONObject(); // 크루메이트들 담을 Json
 
                         for (Crewmate crewmate : room.getCrewmates()){ // 기존 방에 있던 크루원들 초기 정보
-                            crewmatesJson.put(room.getCrewmates().indexOf(crewmate), crewmate.getInitCrewmateJson());
+                            crewmatesJson.put(room.getCrewmates().indexOf(crewmate), crewmate.getInitCrewmateJson()); // 크루메이트 담음
                         }
-                        roomInfoJson.put("crewmates", crewmatesJson);
-                        System.out.println(roomInfoJson);
-                        out.println(roomInfoJson.toJSONString());
+                        crewmatesJson.put("crewmates_size", room.getCrewmates().size()); // 방인원 현재 사이즈
+                        roomInfoJson.put("crewmates", crewmatesJson); // 크루메이트들 정보
+                        //System.out.println(roomInfoJson);
+                        out.println(roomInfoJson.toJSONString()); // 방 정보 클라이언트에 전송
                     }
                 }
 

@@ -35,6 +35,8 @@ public class Server {
                 System.out.println("[Server] Waiting for client connection...");
                 System.out.println("[Server] Connected Client : " + clientList.size());
                 clientSocket = s.serverSocket.accept();
+                clientSocket.setTcpNoDelay(true);
+                clientSocket.setSoLinger(false, 0);
                 System.out.println("[Server] Connected to client!");
                 ClientHandler client = new ClientHandler(clientSocket);
                 Server.clientList.add(client);
